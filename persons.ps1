@@ -84,7 +84,7 @@ try{
         tpersoon.email_werk, 
         tpersoon.email_prive 
     FROM 
-        t4e_HelloID.dpib010 tpersoon
+        dpib010 tpersoon
     "
     $persons = New-Object System.Collections.ArrayList
     Get-SQLData -connectionString $connectionString -SqlQuery $queryPersons -Data ([ref]$persons)
@@ -111,11 +111,11 @@ try{
         tcontract.deelb_perc,
         tcontract.arelsrt_kd
     FROM 
-        t4e_HelloID.dpic300 tcontract  
-        LEFT JOIN t4e_HelloID.dpib015 tafdeling ON tcontract.oe_hier_sl = tafdeling.dpib015_sl
-        LEFT JOIN t4e_HelloID.dpib004 tkostenplaats ON tafdeling.kstpl_kd = tkostenplaats.kstpl_kd
-        LEFT JOIN t4e_HelloID.dpic351 tfunctie ON tcontract.primfunc_kd = tfunctie.func_kd
-        LEFT JOIN t4e_HelloID.dpic200 topdrgvr ON tcontract.OPDRGVR_NR = topdrgvr.OPDRGVR_NR 
+        dpic300 tcontract  
+        LEFT JOIN dpib015 tafdeling ON tcontract.oe_hier_sl = tafdeling.dpib015_sl
+        LEFT JOIN dpib004 tkostenplaats ON tafdeling.kstpl_kd = tkostenplaats.kstpl_kd
+        LEFT JOIN dpic351 tfunctie ON tcontract.primfunc_kd = tfunctie.func_kd
+        LEFT JOIN dpic200 topdrgvr ON tcontract.OPDRGVR_NR = topdrgvr.OPDRGVR_NR 
     "
     $contracts = New-Object System.Collections.ArrayList
     Get-SQLData -connectionString $connectionString -SqlQuery $queryContracts -Data ([ref]$contracts)
