@@ -1,0 +1,13 @@
+[
+    {
+      "key": "connectionString",
+      "type": "input",
+      "defaultValue": "",
+      "templateOptions": {
+        "label": "Connection string",
+        "placeholder": "Server=db01.enyoi.org;Database=Beaufort;Trusted_Connection=True;",
+        "description": "",
+        "required": true
+      }
+    }
+  ]
