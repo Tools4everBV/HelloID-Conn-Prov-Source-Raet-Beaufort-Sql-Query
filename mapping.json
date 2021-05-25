@@ -25,6 +25,14 @@
             }
         },
         {
+            "name": "Custom.employeeIdInAD",
+            "mode": "complex",
+            "value": "function getEmployeeIDInAD(){\r\n    let employeeIDInAD = 'i51/p' + source.ExternalId;\r\n\r\n    return employeeIDInAD;\r\n}\r\n\r\ngetEmployeeIDInAD()",
+            "validation": {
+                "required": false
+            }
+        },
+        {
             "name": "Details.Gender",
             "mode": "field",
             "value": "geslacht",
@@ -165,7 +173,7 @@
         {
             "name": "Details.Fte",
             "mode": "complex",
-            "value": "function getFte(){\r\n    let Fte = (sourceContract.deelb_perc / 100);\r\n\r\n    return Fte;\r\n}\r\n\r\ngetFte()",
+            "value": "function getFte(){\r\n    let Fte = 0;\r\n\r\n    if (typeof sourceContract.deelb_perc !== 'undefined' && sourceContract.deelb_perc) {\r\n        Fte = (sourceContract.deelb_perc / 100);\r\n    }\r\n    return Fte;\r\n}\r\n\r\ngetFte()",
             "validation": {
                 "required": false
             }
@@ -197,7 +205,7 @@
         {
             "name": "Employer.Code",
             "mode": "field",
-            "value": "opdrgvr_nr",
+            "value": "inst_nr",
             "validation": {
                 "required": false
             }
@@ -213,7 +221,7 @@
         {
             "name": "Employer.Name",
             "mode": "field",
-            "value": "opdrgvr_oms",
+            "value": "i_naam",
             "validation": {
                 "required": false
             }
@@ -229,7 +237,7 @@
         {
             "name": "ExternalId",
             "mode": "complex",
-            "value": "function getExternalId(){\r\n    let externalId = sourceContract.pers_nr + \" \" + new String(sourceContract.dv_vlgnr);\r\n\r\n    return externalId;\r\n}\r\n\r\ngetExternalId()",
+            "value": "function convertDate(date) {\r\n    let day = date.getDate();\r\n    day = day < 10 ? \"0\" + day : day;\r\n    let month = date.getMonth() + 1;\r\n    month = month < 10 ? \"0\" + month : month;\r\n    let year = date.getFullYear();\r\n    return day + \"/\" + month + \"/\" + year;\r\n}\r\n\r\nfunction getExternalId(){\r\n    let externalId = sourceContract.objectType + \" \" + sourceContract.pers_nr + \" \" + new String(sourceContract.dv_vlgnr);\r\n\r\n    let startDate = sourceContract.indnst_dt;\r\n    if (typeof startDate !== 'undefined' && startDate) {\r\n        const newStartdate = new Date(startDate);\r\n        startdateFormatted = convertDate(newStartdate);        \r\n        externalId = externalId + ' | ' + startdateFormatted;\r\n    }else{\r\n        externalId = externalId + ' | ' + 'Unspecified';\r\n    }\r\n\r\n    let endDate = sourceContract.uitdnst_dt;\r\n    if (typeof endDate !== 'undefined' && endDate) {\r\n        const newEnddate = new Date(endDate);\r\n        endDateFormatted = convertDate(newEnddate);        \r\n        externalId = externalId + ' - ' + endDateFormatted;\r\n    }else{\r\n        externalId = externalId + ' - ' + 'Unspecified';\r\n    }\r\n\r\n    let hoursPerWeek = sourceContract.uren_pw;\r\n    if (typeof hoursPerWeek !== 'undefined' && hoursPerWeek) {     \r\n        externalId = externalId + ' | ' + new String(hoursPerWeek);\r\n    }else{\r\n        externalId = externalId + ' | ' + 0;\r\n    }\r\n\r\n    let department = sourceContract.afdeling;\r\n    if (typeof department !== 'undefined' && department) {     \r\n        externalId = externalId + ' | ' + new String(department);\r\n    }else{\r\n        externalId = externalId + ' | ' + null;\r\n    }\r\n\r\n    let profession = sourceContract.func_kd;\r\n    if (typeof profession !== 'undefined' && profession) {     \r\n        externalId = externalId + ' | ' + new String(profession);\r\n    }else{\r\n        externalId = externalId + ' | ' + null;\r\n    }    \r\n\r\n    return externalId;\r\n}\r\n\r\ngetExternalId()",
             "validation": {
                 "required": false
             }
