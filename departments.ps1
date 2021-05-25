@@ -63,8 +63,8 @@ try{
         CAST(ou.oe_hoger_n AS int) AS oe_hoger_n,
         CAST(m.pers_nr AS int) as pers_nr,
         m.rol_oe_kd
-    FROM t4e_HelloID.dpib015 ou
-        LEFT JOIN t4e_HelloID.dpib025 m ON m.dpib015_sl = ou.dpib015_sl
+    FROM dpib015 ou
+        LEFT JOIN dpib025 m ON m.dpib015_sl = ou.dpib015_sl
     WHERE (pers_nr IS NULL) OR (
         m.rol_oe_kd = '$managerTypeCode'
         AND m.ingang_dt < CURRENT_TIMESTAMP
