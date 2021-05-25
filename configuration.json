@@ -1,13 +1,34 @@
 [
-    {
-      "key": "connectionString",
-      "type": "input",
-      "defaultValue": "",
-      "templateOptions": {
-        "label": "Connection string",
-        "placeholder": "Server=db01.enyoi.org;Database=Beaufort;Trusted_Connection=True;",
-        "description": "",
-        "required": true
-      }
+  {
+    "key": "connectionString",
+    "type": "input",
+    "defaultValue": "",
+    "templateOptions": {
+      "label": "Connection string",
+      "placeholder": "Server=db01.enyoi.org;Database=Beaufort;Trusted_Connection=True;",
+      "description": "",
+      "required": true
     }
-  ]
+  },
+  {
+    "key": "managerTypeCode",
+    "type": "input",
+    "defaultValue": "",
+    "templateOptions": {
+      "label": "Manager type code",
+      "placeholder": "MGR",
+      "description": "Possible options: MGR, SLG",
+      "required": true
+    }
+  },
+  {
+    "key": "switchIncludePositions",
+    "type": "checkbox",
+    "defaultValue": false,
+    "templateOptions": {
+      "label": "Include positions",
+      "description": "Include positions as well as contracts",
+      "required": false
+    }
+  }
+]
