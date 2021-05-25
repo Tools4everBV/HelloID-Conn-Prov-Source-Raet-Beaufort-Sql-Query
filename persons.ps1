@@ -87,6 +87,7 @@ try {
 
     # SQL query for contracts
     $queryContracts = "SELECT
+        objectType = 'Contract',
         tcontract.pers_nr,
         tcontract.dv_vlgnr,
         tcontract.opdrgvr_nr,
@@ -111,6 +112,7 @@ try {
         LEFT JOIN dpib004 tkostenplaats ON tafdeling.kstpl_kd = tkostenplaats.kstpl_kd
         LEFT JOIN dpic351 tfunctie ON tcontract.primfunc_kd = tfunctie.func_kd
         LEFT JOIN dpic200 topdrgvr ON tcontract.OPDRGVR_NR = topdrgvr.OPDRGVR_NR
+        LEFT JOIN dpic202 tinstelling ON (tcontract.inst_nr = tinstelling.inst_nr AND tcontract.OPDRGVR_NR = tinstelling.OPDRGVR_NR)
     "
     $contracts = New-Object System.Collections.ArrayList
     Get-SQLData -connectionString $connectionString -SqlQuery $queryContracts -Data ([ref]$contracts)
@@ -123,6 +125,7 @@ try {
     if ($true -eq $includePositions) {
         # SQL query for contracts
         $queryPositions = "SELECT
+            objectType = 'Position',
             tposition.pers_nr,
             tposition.dv_vlgnr,
             tcontract.opdrgvr_nr,
@@ -149,6 +152,7 @@ try {
             LEFT JOIN dpib004 tkostenplaats ON tafdeling.kstpl_kd = tkostenplaats.kstpl_kd
             LEFT JOIN dpic351 tfunctie ON tposition.operfunc_kd = tfunctie.func_kd
 	        LEFT JOIN dpic200 topdrgvr ON tcontract.OPDRGVR_NR = topdrgvr.OPDRGVR_NR
+	        LEFT JOIN dpic202 tinstelling ON (tcontract.inst_nr = tinstelling.inst_nr AND tcontract.OPDRGVR_NR = tinstelling.OPDRGVR_NR)
         "
         $positions = New-Object System.Collections.ArrayList
         Get-SQLData -connectionString $connectionString -SqlQuery $queryPositions -Data ([ref]$positions)
