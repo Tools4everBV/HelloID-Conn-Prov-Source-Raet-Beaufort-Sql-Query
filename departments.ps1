@@ -1,7 +1,8 @@
 $config = ConvertFrom-Json $configuration
 
 # ODBC connection string
-$connectionString = $config.connectionString;
+$connectionString = $($config.connectionString);
+$managerTypeCode = $($config.managerTypeCode);
 
 function Get-SQLData{
     param(
@@ -62,8 +63,13 @@ try{
         CAST(ou.oe_hoger_n AS int) AS oe_hoger_n,
         CAST(m.pers_nr AS int) as pers_nr,
         m.rol_oe_kd
-    FROM dpib015 ou
-        LEFT JOIN dpib025 m ON m.dpib015_sl = ou.dpib015_sl
+    FROM t4e_HelloID.dpib015 ou
+        LEFT JOIN t4e_HelloID.dpib025 m ON m.dpib015_sl = ou.dpib015_sl
+    WHERE (pers_nr IS NULL) OR (
+        m.rol_oe_kd = '$managerTypeCode'
+        AND m.ingang_dt < CURRENT_TIMESTAMP
+        AND (m.eind_dt IS NULL OR m.eind_dt > CURRENT_TIMESTAMP)
+    )
     "
 
     $departments = New-Object System.Collections.ArrayList
@@ -87,7 +93,7 @@ try{
 
     # Output the json
     $json = $departments | ConvertTo-Json -Depth 3
-    Write-Output $json    
+    Write-Output $json
 }catch{
     Write-Error $_
 }
