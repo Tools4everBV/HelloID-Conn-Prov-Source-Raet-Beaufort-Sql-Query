@@ -1,3 +1,13 @@
+<#
+.SYNOPSIS
+    Generates a Persons object including contracts and possibly positions for use as HelloID Provisioning Source Import
+    Requires a SQL database to query the data from
+.NOTES
+    Last Edit: 2021-08-30
+    Version 1.0 - initial release
+    Version 1.0.1 - Added date conversion to full string including timezone to avoid mismatches
+#>
+
 $config = ConvertFrom-Json $configuration
 
 # ODBC connection string
@@ -117,11 +127,23 @@ try {
     $contracts = New-Object System.Collections.ArrayList
     Get-SQLData -connectionString $connectionString -SqlQuery $queryContracts -Data ([ref]$contracts)
     Write-Verbose -Verbose "Contract query completed";
-        
+
+    # Enhance contract object
+    Write-Verbose "Augmenting contracts..." -Verbose
+    $contracts | ForEach-Object {
+        # Add date conversion to full string including timezone to avoid mismatches
+        if (-not([string]::IsNullOrEmpty($_.indnst_dt))) {
+            $_.indnst_dt = $_.indnst_dt.ToString('yyyy-MM-ddThh:mm:sszzz')
+        }
+        if (-not([string]::IsNullOrEmpty($_.uitdnst_dt))) {
+            $_.uitdnst_dt = $_.uitdnst_dt.ToString('yyyy-MM-ddThh:mm:sszzz')
+        }
+    }
+
     # Group the contracts
     Write-Verbose "Grouping contracts..." -Verbose
     $contracts = $contracts | Group-Object PERS_NR -AsHashTable  
-    
+
     if ($true -eq $includePositions) {
         # SQL query for contracts
         $queryPositions = "SELECT
@@ -157,6 +179,18 @@ try {
         $positions = New-Object System.Collections.ArrayList
         Get-SQLData -connectionString $connectionString -SqlQuery $queryPositions -Data ([ref]$positions)
         Write-Verbose -Verbose "Position query completed";
+
+        # Enhance position object
+        Write-Verbose "Augmenting positions..." -Verbose
+        $positions | ForEach-Object {
+            # Add date conversion to full string including timezone to avoid mismatches
+            if (-not([string]::IsNullOrEmpty($_.indnst_dt))) {
+                $_.indnst_dt = $_.indnst_dt.ToString('yyyy-MM-ddThh:mm:sszzz')
+            }
+            if (-not([string]::IsNullOrEmpty($_.uitdnst_dt))) {
+                $_.uitdnst_dt = $_.uitdnst_dt.ToString('yyyy-MM-ddThh:mm:sszzz')
+            }
+        }
 
         # Group the positions
         Write-Verbose "Grouping positions..." -Verbose
@@ -197,17 +231,22 @@ try {
         }
         
         # Convert naming convention codes to standard
-        if($_.GBRK_NAAM -eq "E") {
+        if ($_.GBRK_NAAM -eq "E") {
             $_.GBRK_NAAM = "B"
-        }elseif ($_.GBRK_NAAM -eq "P") {
+        }
+        elseif ($_.GBRK_NAAM -eq "P") {
             $_.GBRK_NAAM = "P"
-        }elseif ($_.GBRK_NAAM -eq "C") {
+        }
+        elseif ($_.GBRK_NAAM -eq "C") {
             $_.GBRK_NAAM = "BP"
-        }elseif ($_.GBRK_NAAM -eq "B") {
+        }
+        elseif ($_.GBRK_NAAM -eq "B") {
             $_.GBRK_NAAM = "PB"
-        }elseif ($_.GBRK_NAAM -eq "D") {
+        }
+        elseif ($_.GBRK_NAAM -eq "D") {
             $_.GBRK_NAAM = "BP"
-        }else{
+        }
+        else {
             $_.GBRK_NAAM = "B"    
         }
     }
@@ -220,6 +259,7 @@ try {
     $json = $persons | ConvertTo-Json -Depth 10
     $json = $json.Replace("._", "__")
     Write-Output $json
-}catch {
+}
+catch {
     Write-Error $_
 }
