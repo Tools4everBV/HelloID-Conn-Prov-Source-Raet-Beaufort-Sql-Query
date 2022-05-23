@@ -30,5 +30,15 @@
       "description": "Include positions as well as contracts",
       "required": false
     }
+  },
+  {
+    "key": "endDateThreshold",
+    "type": "input",
+    "defaultValue": 90,
+    "templateOptions": {
+      "label": "End date threshold",
+      "description": "The amount of days a contract can be in the past before being excluded from the imported data",
+      "required": true
+    }
   }
 ]
